@@ -3,18 +3,16 @@ package testbase;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.hamcrest.Matcher;
+import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
-
 public class TestBase {
 
-    public Logger log = Logger.getLogger(this.getClass());
+    protected Logger log = Logger.getLogger(this.getClass());
     private final String ASSERT_LOG_TEMPLATE = "%s%s - expected: %s%s - actual %s";
     String name = this.getClass().getSimpleName();
 
@@ -30,10 +28,10 @@ public class TestBase {
         DOMConfigurator.configure("log4j.xml");
     }
 
-    protected  <T> void customAssertThat(String message, T actual, Matcher<? super T> matcher){
+    protected  <T> void logAssertion(String message, T actual, Matcher<? super T> matcher){
         String logStart = "Validate " + message;
         log.info(String.format(ASSERT_LOG_TEMPLATE, logStart, System.lineSeparator(), matcher.toString(), System.lineSeparator(), actual));
-        assertThat(matcher.matches(actual)).isEqualTo(true);
+        Assert.assertTrue(matcher.matches(actual));
     }
 
 }

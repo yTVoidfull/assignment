@@ -4,7 +4,6 @@ import apipojos.User;
 import apipojos.UserPost;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.hamcrest.Matcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.core.Is.is;
 
 public class APITest extends TestBase {
@@ -39,7 +37,7 @@ public class APITest extends TestBase {
         log.info("selected userId: " + u.getId());
         log.info(u.getAddress());
 
-        customAssertThat("email matches pattern", u.getEmail().matches(EMAIL_PATTERN), is(true));
+        logAssertion("email matches pattern", u.getEmail().matches(EMAIL_PATTERN), is(true));
 
         Integer userId = u.getId();
         responseEntity = template.getForEntity(USER_POSTS_URL + userId, String.class);
@@ -48,15 +46,15 @@ public class APITest extends TestBase {
         for(UserPost post : posts){
             log.info("validating post " + post.getId());
 
-            customAssertThat("userId in post", post.getUserId(), is(u.getId()));
-            customAssertThat("body is empty", post.getBody().isEmpty(), is(false));
-            customAssertThat("title is empty", post.getTitle().isEmpty(), is(false));
+            logAssertion("userId in post", post.getUserId(), is(u.getId()));
+            logAssertion("body is empty", post.getBody().isEmpty(), is(false));
+            logAssertion("title is empty", post.getTitle().isEmpty(), is(false));
         }
 
         UserPost newPost = new UserPost(userId, -1, "Test Title", "Test Body");
         responseEntity = template.postForEntity(USER_POSTS_URL, newPost.toString(), String.class);
 
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        logAssertion("response code", responseEntity.getStatusCode(), is(HttpStatus.CREATED));
     }
 
 }
